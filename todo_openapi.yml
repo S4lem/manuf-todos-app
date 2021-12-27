@@ -1,0 +1,88 @@
+openapi: 3.0.1
+info:
+  title: TodoApp
+  description: Todo openapi
+  version: 1.0.0
+tags:
+- name: todos
+  description: Everything about your Todos
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+paths:
+  /todos:
+    get:
+      tags:
+      - todos
+      summary: Fetch all todos
+      description: Fetch all todos
+      operationId: getAllTodos
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Todos'
+        400:
+          description: Invalid status value
+          content: {}
+    post:
+      tags:
+      - todos
+      summary: Add a todo
+      description: Adds a todo
+      operationId: addTodo
+      requestBody:
+        description: Todo object without the id
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              example:
+                description: Kill the neighbor
+        required: true
+      responses:
+        405:
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+  /todos/{todoId}:
+    delete:
+      tags:
+      - todos
+      summary: Deletes a todo
+      description: Deletes a todo
+      operationId: deleteTodo
+      parameters:
+      - name: todoId
+        in: path
+        description: Todo id to delete
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        400:
+          description: Invalid ID supplied
+          content: {}
+        404:
+          description: Todo not found
+          content: {}
+components:
+  schemas:
+    Todos:
+      required:
+      - description
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 8fb8ef1c-dfc6-4755-ac5a-b9a9cce7d790
+        description:
+          type: string
+          example: Feed the dog

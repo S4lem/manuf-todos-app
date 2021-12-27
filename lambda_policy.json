@@ -1,0 +1,15 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+            "Sid": "DynamoDBCrudAccess",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:Query"
+            ],
+            "Resource": "arn:aws:dynamodb:eu-west-3:327268986543:table/todos"
+        }]
+}
