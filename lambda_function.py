@@ -40,11 +40,13 @@ def lambda_handler(event, context):
 
     if method == 'POST' and endpoint == "/todos":
         # Add a new todo
+
+        # Example of a todo :
         # {
         #     "description": "Buy some cheese"
         # }
 
-        # Hints : 
+        # Hint : 
         # json.loads(payload) : converts Json string to Python dictionary
 
         # 1) Convert payload to dict
