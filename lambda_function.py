@@ -33,7 +33,6 @@ def lambda_handler(event, context):
     if method == 'GET' and endpoint == "/todos":
         # Get a list todos
         todos = DatabaseManager.get_list_item_db(table_name=TABLE_NAME_TODOS)
-
         return {
         'statusCode': 200,
         'body': json.dumps(todos)
@@ -41,42 +40,28 @@ def lambda_handler(event, context):
 
     if method == 'POST' and endpoint == "/todos":
         # Add a new todo
-        try:
-            payload = json.loads(payload)
-        except Exception as e:
-            print(e)
-            return {
-                'statusCode': 401,
-                'body': json.dumps({'message': 'Bad request.'})
-            }
-        if not payload.get('description'):
-            return {
-                'statusCode': 401,
-                'body': json.dumps({'message': 'Bad request.'})
-            }
-        
-        new_item_id = DatabaseManager.add_item_db(table_name=TABLE_NAME_TODOS, item=payload)
+        # {
+        #     "description": "Buy some cheese"
+        # }
 
-        return {
-            'statusCode': 200,
-            'body': json.dumps({'message': f'Todo with id {new_item_id} deleted'})
-        }
+        # Hints : 
+        # json.loads(payload) : converts Json string to Python dictionary
+
+        # 1) Convert payload to dict
+        # 2) assert 'description' key exists
+        # 3) Push item to DB
+        # 4) Return 200
+        pass
 
     if method == 'DELETE' and endpoint == "/todos/{todoId}":
         # remove a todo
-        todo_id = path_parameters['todoId']
-        try:
-            DatabaseManager.delete_item_db(table_name=TABLE_NAME_TODOS, id_item=todo_id)
-        except:
-            return {
-                'statusCode': 500,
-                'body': json.dumps({'message': 'Unexpected error.'})
-            }
-        return {
-            'statusCode': 200,
-            'body': json.dumps({'message': f'Todo with id {todo_id} deleted'})
-        }
+
+        # 1) fetch TodoId from path_parameters
+        # 2) Delete the TodoId from DB 
+        # 3) Return 200 
+        pass
+
     return {
-        'statusCode': 404,
-        'body': json.dumps({'message': 'Not found.'})
+        'statusCode': 501,
+        'body': json.dumps({'message': 'Not Implemented.'})
     }
