@@ -29,7 +29,6 @@ def lambda_handler(event, context):
     path_parameters = event.get('pathParameters')
     payload = event.get('body')
 
-
     if method == 'GET' and endpoint == "/todos":
         # Get a list todos
         todos = DatabaseManager.get_list_item_db(table_name=TABLE_NAME_TODOS)
@@ -43,14 +42,14 @@ def lambda_handler(event, context):
 
         # Example of a todo :
         # {
-        #     "description": "Buy some cheese"
+        #     "label": "Buy some cheese"
         # }
 
         # Hint : 
         # json.loads(payload) : converts Json string to Python dictionary
 
         # 1) Convert payload to dict
-        # 2) assert 'description' key exists
+        # 2) assert 'label' key exists
         # 3) Push item to DB
         # 4) Return 200
         pass
@@ -62,6 +61,16 @@ def lambda_handler(event, context):
         # 2) Delete the TodoId from DB 
         # 3) Return 200 
         pass
+
+    if method == 'OPTIONS': 
+        return {
+            'statusCode': 200,
+            'headers': {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Origin': '*'
+                }
+        }
 
     return {
         'statusCode': 501,
