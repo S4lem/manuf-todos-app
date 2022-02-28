@@ -1,4 +1,4 @@
-import json
+import json, os
 from db_fetcher import DatabaseManager
 
 TABLE_NAME_TODOS = "todo-XX"
@@ -9,7 +9,6 @@ headers = {
     "Access-Control-Allow-Origin": '*',
     "Access-Control-Allow-Methods": 'POST,GET,DELETE,OPTIONS'
 }
-
 
 def lambda_handler(event, context):
     """
@@ -37,48 +36,76 @@ def lambda_handler(event, context):
     path_parameters = event.get('pathParameters')
     payload = event.get('body')
 
+
     if method == 'GET' and endpoint == "/todos":
         # Get a list todos
         todos = DatabaseManager.get_list_item_db(table_name=TABLE_NAME_TODOS)
         return {
-        'statusCode': 200,
-        'headers': headers,
-        'body': json.dumps(todos)
-    }
+            'statusCode': 200,
+            'headers': headers,
+            'body': json.dumps(todos)
+        }
 
     if method == 'POST' and endpoint == "/todos":
         # Add a new todo
 
-        # Example of a todo :
-        # {
-        #     "label": "Buy some cheese"
-        # }
-
-        # Hint : 
-        # json.loads(payload) : converts Json string to Python dictionary
-        
         # 1) Convert payload to dict
+        try:
+            payload = json.loads(payload)
+        except Exception as e:
+            print(e)
+            return {
+                'statusCode': 400,
+                'headers': headers,
+                'body': json.dumps({'error': 'Payload must be Json format.'})
+            }
         # 2) assert 'label' key exists
+        if not payload.get('label'):
+            return {
+                'statusCode': 400,
+                'headers': headers,
+                'body': json.dumps({'error': 'label not found.'})
+            }
         # 3) Push item to DB
+        new_item_id = DatabaseManager.add_item_db(table_name=TABLE_NAME_TODOS, item=payload)
+
         # 4) Return 200
-        pass
+        return {
+                'statusCode': 200,
+                'headers': headers,
+                'body': json.dumps({'message': f'Todo with id {new_item_id} added'})
+            }
 
     if method == 'DELETE' and endpoint == "/todos/{todoId}":
         # remove a todo
 
         # 1) fetch TodoId from path_parameters
-        # 2) Delete the TodoId from DB 
+        todo_id = path_parameters['todoId']
+        try:
+            # 2) Delete the TodoId from DB 
+            DatabaseManager.delete_item_db(table_name=TABLE_NAME_TODOS, id_item=todo_id)
+        except:
+            return {
+                'statusCode': 500,
+                'headers': headers,
+                'body': json.dumps({'message': f"Couldn't remove todo"})
+            }
+        
         # 3) Return 200 
-        pass
+        return {
+            'statusCode': 200,
+            'headers': headers,
+            'body': json.dumps({'message': f"Todo with id {todo_id} deleted"})
+        }
 
-    if method == 'OPTIONS': 
+    if method == 'OPTIONS':
         return {
             'statusCode': 200,
             'headers': headers
         }
 
     return {
-        'statusCode': 501,
-        'headers': headers,
-        'body': json.dumps({'message': 'Not Implemented.'})
-    }
+            'statusCode': 404,
+            'headers': headers,
+            'body': json.dumps({'message': f"Unknown method"})
+        }
