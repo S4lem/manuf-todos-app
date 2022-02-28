@@ -1,7 +1,7 @@
 import json
 from db_fetcher import DatabaseManager
 
-TABLE_NAME_TODOS = "todo-XX"
+TABLE_NAME_TODOS = "todos-XX"
 
 headers = {
     "X-Requested-With": '*',
@@ -56,7 +56,7 @@ def lambda_handler(event, context):
 
         # Hint : 
         # json.loads(payload) : converts Json string to Python dictionary
-        
+
         # 1) Convert payload to dict
         # 2) assert 'label' key exists
         # 3) Push item to DB
